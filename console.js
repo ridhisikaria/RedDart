@@ -15,6 +15,7 @@ global["utils"] = require("./build/utils");
 // global["consumers"] = require("./build/consumers");
 // global["repositories"] = require("./build/database/repositories");
 global["models"] = require("./build/database/models");
+global["actions"] = require("./build/actions");
 // global["mappers"] = require("./build/mappers");
 // global["messageProcessors"] = require("./build/messageProcessors");
 // const MongoDbConnectionManager = require("./build/database/models/mongodb/index");
