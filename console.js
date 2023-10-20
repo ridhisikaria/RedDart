@@ -9,16 +9,16 @@ function puts(p){
 }
 
 global["puts"] = puts;
-global["utils"] = require("./build/src/utils");
-global["services"] = require("./build/src/services");
-global["logging"] = require("./build/src/logging");
-global["consumers"] = require("./build/src/consumers");
-global["repositories"] = require("./build/src/database/repositories");
-global["models"] = require("./build/src/database/models");
-global["mappers"] = require("./build/src/mappers");
-global["messageProcessors"] = require("./build/src/messageProcessors");
-const MongoDbConnectionManager = require("./build/src/database/models/mongodb/index");
-MongoDbConnectionManager.default.getDbInstance();
+global["utils"] = require("./build/utils");
+// global["services"] = require("./build/services");
+// global["logging"] = require("./build/logging");
+// global["consumers"] = require("./build/consumers");
+// global["repositories"] = require("./build/database/repositories");
+global["models"] = require("./build/database/models");
+// global["mappers"] = require("./build/mappers");
+// global["messageProcessors"] = require("./build/messageProcessors");
+// const MongoDbConnectionManager = require("./build/database/models/mongodb/index");
+// MongoDbConnectionManager.default.getDbInstance();
 
 repl.start({
   prompt: "app > "
