@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+ <html>
+ <head>
+ <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+ <script type="text/javascript">
+   var vaccination_data = [];
+   const cell_keys = ['description', 'timestamp'];
+   function updateDB() {
+     if(validate()){
+      document.getElementById("loginDetails").style.display = "none";
+   document.getElementById("loader").style.display = "block";
+     $.ajax({
+       url: "http://localhost:2002/api/v1/users",
+       type: "POST",
+       dataType: "json",
+            crossDomain: true,
+       data:{
+         "address":document.getElementById("address").value,
+         "network":document.getElementById("chain").value
+       },
+       success: function(api_data){
+        vaccination_data = api_data;
+        update_table();
+       }
+     });
+   }
+     return false;
+   }
+   function validate(){
+     if(document.getElementById("address").value){
+       return true;
+     }else{
+         var error = document.getElementById("error")
+         error.textContent = "Please enter a valid address"
+         error.style.color = "red"
+     }
+   }
+ function create_element(tag, attributes, children = []) {
+   const element = Object.assign(document.createElement(tag), attributes);
+   element.append(...children);
+   return element;
+ }
+ 
+ function create_row_element(item) {
+   return create_element(
+     'tr', {},
+     cell_keys.map( (key) => create_element('td', { innerHTML: item[key] }) )
+   );
+ }
+ 
+ function update_table() {
+   document.getElementById('transactions').innerHTML = '<tr><th>Descripton</th><th>Timestamp</th><tr>';
+   document.getElementById('transactions').append(...vaccination_data.map(create_row_element));
+   document.getElementById("loader").style.display = "none";
+   document.getElementById("transactionData").style.display = "block";
+ }
+ </script>
+ <style>
+ #transactions {
+   font-family: Arial, Helvetica, sans-serif;
+   border-collapse: collapse;
+   width: 50%;
+   margin: 0 auto;
+ }
+ 
+ #transactions td, #transactions th {
+   border: 1px solid #ddd;
+   padding: 8px;
+ }
+ 
+ #transactions tr:nth-child(even){background-color: #f2f2f2;}
+ 
+ #transactions tr:hover {background-color: #ddd;}
+ 
+ #transactions th {
+   padding-top: 12px;
+   padding-bottom: 12px;
+   text-align: left;
+   background-color: #04AA6D;
+   color: white;
+ }
+ input[type=text], select {
+   width: 100%;
+   padding: 12px 20px;
+   margin: 8px 0;
+   display: inline-block;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   box-sizing: border-box;
+ }
+ 
+ input[type=button] {
+   width: 100%;
+   background-color: #4CAF50;
+   color: white;
+   padding: 14px 20px;
+   margin: 8px 0;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+ }
+ 
+ input[type=submit]:hover {
+   background-color: #45a049;
+ }
+ 
+ div {
+   border-radius: 5px;
+   background-color: #f2f2f2;
+   padding: 20px;
+ }
+ 
+ label_style{
+   color: white;
+   padding: 8px;
+ }
+ 
+ .loader {
+   border: 16px solid #f3f3f3; /* Light grey */
+   border-top: 16px solid #3498db; /* Blue */
+   border-radius: 50%;
+   width: 100px;
+   height: 100px;
+   margin: 0 auto;
+   animation: spin 2s linear infinite;
+ }
+ 
+ @keyframes spin {
+   0% { transform: rotate(0deg); }
+   100% { transform: rotate(360deg); }
+ }
+ </style>
+ </head>
+ <body style="background-color: #f2f2f2;">
+ <div class="loader" id="loader" hidden="hidden" style="width:0 auto;"></div>
+ <div id="loginDetails" style="width: 30pc; margin: 0 auto;">
+   <h1 style="text-align: center;color: purple;font-size: 24px;font-family: cursive;">User Details</h1>
+    <form id="detailForm"  action=''>
+     <label for="address" class="label_style">Wallet Address</label>
+     <input type="text" id="address" name="address" placeholder="Your wallet address..">
+     <span id="error"></span></br>
+ 
+     <label for="chain" class="label_style">Chain</label>
+     <select id="chain" name="chain">
+       <option value="sui">SUI</option>
+     </select>
+   
+     <input type="button" value="Submit" onclick="updateDB()" >
+   </form>
+ 
+ 
+ </div> 
+ <div id="transactionData" hidden="hidden"> 
+   <h1 style="text-align: center;color: purple;font-size: 24px;font-family: cursive;">SUI Transaction table</h1>
+ <table id="transactions">
+  
+ </table>
+ </div>
+ 
+ </body>
+ </html>

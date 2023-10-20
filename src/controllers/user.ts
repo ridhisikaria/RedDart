@@ -1,3 +1,4 @@
+import { EventRepository } from "../database/repositories/event";
 import { UserRepository } from "../database/repositories/user";
 import { ExpressRequest, ExpressResponse } from "../types";
 import { IUser } from "../types/user";
@@ -8,15 +9,18 @@ export class UserController {
             const query = req.params;
 
             const address = query.address as string;
-            if(!address) {
-                return res.status(400).json({success: false, error: { message: "Validation Failed" }});
+            if (!address) {
+                return res.status(400).json({ success: false, error: { message: "Validation Failed" } });
             }
 
             const user = await UserRepository.get(address);
+            if (!user) res.status(404).json({ success: false, error: { message: "User not found" } });
+
+
             return res.status(200).json({ success: true, data: user });
         } catch (error: any) {
             console.error("User get api failed", { error });
-            return res.status(500).json({ success: false, error: { message: "Internal Server Error" }});
+            return res.status(500).json({ success: false, error: { message: "Internal Server Error" } });
         }
     }
 
@@ -25,16 +29,28 @@ export class UserController {
             const query = req.body;
 
             const address = query.address as string;
-            if(!address) {
-                return res.status(400).json({success: false, error: { message: "Validation Failed" }});
+            if (!address) {
+                return res.status(400).json({ success: false, error: { message: "Validation Failed" } });
             }
-            
 
-            const user = await UserRepository.create({ address, network: "SUI" });
-            return res.status(200).json({ success: true, data: user });
+
+            await UserRepository.create({ address, network: "SUI" });
+
+            const events = await EventRepository.get(address)
+
+            const data = [];
+
+            events.forEach(event => {
+                data.push({
+                    description: "Reward Deposited for Sui Transaction digest " + event.txDigest,
+                    timestamp: event.timestamp
+                })
+            });
+
+            return res.status(200).json(events);
         } catch (error: any) {
             console.error("User get api failed", { error });
-            return res.status(500).json({ success: false, error: { message: "Internal Server Error" }});
+            return res.status(500).json({ success: false, error: { message: "Internal Server Error" } });
         }
     }
 }

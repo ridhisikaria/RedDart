@@ -21,13 +21,20 @@ const models = require("./database/models");
 const app = express();
 app.disable("x-powered-by");
 
+const path = require('path');
+
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, '../reddart.html'));
+});
+
 // Apply cors settings
 const corsOptions: cors.CorsOptions = {
-  allowedHeaders: ["X-Forwarded-For", "Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token", "X-Timestamp", "X-Source", "ngsw-bypass", "Authorization", "X-Authorization-Secret", "X-Integrity"],
+  allowedHeaders: ["X-Forwarded-For","Access-Control-Allow-Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token", "X-Timestamp", "X-Source", "ngsw-bypass", "Authorization", "X-Authorization-Secret", "X-Integrity"],
   exposedHeaders: ["X-Pagination", "X-Authentication"],
   credentials: true,
   methods: "GET,OPTIONS,PUT,PATCH,POST,DELETE",
-  origin: ["http://localhost:8001"],
+  origin: ["*"],
   preflightContinue: false,
 };
 
