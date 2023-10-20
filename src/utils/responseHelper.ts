@@ -1,6 +1,5 @@
 import { Response, Request } from "express";
-import { Common } from "./common";
-import { STATUS_CODES } from "../constants";
+import { STATUS_CODES } from "../constants/constants";
 
 export class ResponseHelper {
     static respondError(res: Response, req: Request, obj: unknown): Response {

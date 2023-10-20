@@ -17,7 +17,11 @@ module.exports = (sequelize: SequelizeInstance) => {
             address: {
                 type: DataTypes.STRING,
                 allowNull: false
-            }
+            }, network: {
+                type: DataTypes.STRING,
+                defaultValue: "SUI",
+                allowNull: false
+            },
         },
         {
             sequelize,

@@ -10,7 +10,7 @@ import * as utils from "./utils";
 import routes from "./routes";
 
 // import { handleError } from "./middlewares";
-import MongoDbConnectionManager from "./database/models/mongodb";
+// import MongoDbConnectionManager from "./database/models/mongodb";
 import { ResponseHelper } from "./utils/responseHelper";
 
 const app = express();
@@ -74,7 +74,7 @@ app.listen(parseInt(port), host, async () => {
     });
   });
 
-  await MongoDbConnectionManager.connectNoSqlDB();
+  // await MongoDbConnectionManager.connectNoSqlDB();
 
   process.on("SIGTERM", gracefullShutdown);
   process.on("SIGINT", gracefullShutdown);
