@@ -17,7 +17,7 @@ export class UserRepository {
             return await models.Users.findAll({
                 where: { address },
                 limit: 1
-            });
+            })[0];
         } catch (error: any) {
             console.error("UserRepository get", { address, error });
             throw error;

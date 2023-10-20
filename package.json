@@ -31,6 +31,7 @@
   "author": "Baka People",
   "license": "ISC",
   "dependencies": {
+    "@mysten/sui.js": "^0.44.0",
     "@spheron/storage": "^2.0.3",
     "await-to-js": "^3.0.0",
     "axios": "^0.27.2",

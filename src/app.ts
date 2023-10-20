@@ -12,6 +12,9 @@ import routes from "./routes";
 // import { handleError } from "./middlewares";
 // import MongoDbConnectionManager from "./database/models/mongodb";
 import { ResponseHelper } from "./utils/responseHelper";
+import client from "./scanner";
+import { UserRepository } from "./database/repositories/user";
+import scanSui from "./scanner";
 
 const app = express();
 app.disable("x-powered-by");
@@ -74,6 +77,7 @@ app.listen(parseInt(port), host, async () => {
     });
   });
 
+  scanSui();
   // await MongoDbConnectionManager.connectNoSqlDB();
 
   process.on("SIGTERM", gracefullShutdown);
