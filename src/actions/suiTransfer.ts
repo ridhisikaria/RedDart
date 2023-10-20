@@ -1,20 +1,38 @@
+import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
+import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
 import { TransactionBlock } from "@mysten/sui.js/transactions";
-import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
+import {getFaucetHost, requestSuiFromFaucetV0 } from "@mysten/sui.js/faucet";
 import { IUser } from "../types/user";
-import client from "../chainConnectors/sui";
+//import client from "../chainConnectors/sui";
+
+const rpcUrl = getFullnodeUrl("devnet");
+const client = new SuiClient({url: rpcUrl});
+
+//let seed = "tomorrow income burger sauce relief enact wide afraid become approve air rib";
+let keypair = new Ed25519Keypair();
+//let keypair = Ed25519Keypair.deriveKeypairFromSeed("surge retire stage scissors move forum crucial carry best normal evil adjust");
+console.log(keypair.getPublicKey().toSuiAddress());
+
+requestSuiFromFaucetV0({
+    host: getFaucetHost('devnet'),
+    recipient: keypair.getPublicKey().toSuiAddress()
+})
 
 export class SuiTransfer {
     static async call(user: IUser) {
-        const keypair = new Ed25519Keypair();
-        // const keypair = "0x16d6608ffa4db9ec792019c55eae488224d72e1ae4e68eb578d87a08b6379f79";
-
         const tx = new TransactionBlock();
-        const [coin] = tx.splitCoins(tx.gas, [1000]);
-        tx.transferObjects([coin], "0x909e63e83c5da1dcf47b79782c0a477d8c742c28a88c4d65e3edc87c13653b23");
+        const [coin] = tx.splitCoins(tx.gas, [10000]);
+        console.log([coin])
+
+        tx.transferObjects([coin], user.address);
+        tx.setGasBudget(100000000);
         const result = await client.signAndExecuteTransactionBlock({
-            signer: keypair,
             transactionBlock: tx,
+            signer: keypair,
+            requestType: 'WaitForLocalExecution',
+            options: {
+                showEffects: true,
+              }
         });
-        console.log(result);
     }
 }
