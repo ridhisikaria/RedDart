@@ -34,11 +34,14 @@ export class UserController {
                 return res.status(400).json({ success: false, error: { message: "Validation Failed" } });
             }
 
-            await UserRepository.create({ address, network });
+            const user = await UserRepository.get(address);
+            if (!user) {
+                await UserRepository.create({ address, network });
+            }
 
             const events = await EventRepository.get(address)
 
-            const data = [];
+            const data: any = [];
 
             events.forEach(event => {
                 data.push({
@@ -47,7 +50,7 @@ export class UserController {
                 })
             });
 
-            return res.status(200).json(events);
+            return res.status(200).json(data);
         } catch (error: any) {
             console.error("User get api failed", { error });
             return res.status(500).json({ success: false, error: { message: "Internal Server Error" } });
