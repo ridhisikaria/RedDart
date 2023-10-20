@@ -8,6 +8,20 @@ export class RuleMatcher {
         if (user) {
             console.log(user, event);
 
+            const eventObj = {
+                bcs: event.bcs,
+                txDigest: event.id.txDigest,
+                eventSeq: event.id.eventSeq,
+                packageId: event.packageId,
+                parsedJson: event.parsedJson,
+                sender: event.sender,
+                timestamp: event.timestampMs,
+                transactionModule: event.transactionModule,
+                eventType: event.type
+            };
+
+            
+
             await SuiTransfer.call(user);
         }
     }

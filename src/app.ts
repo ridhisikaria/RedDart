@@ -16,6 +16,8 @@ import client from "./scanner";
 import { UserRepository } from "./database/repositories/user";
 import scanSui from "./scanner";
 
+const models = require("./database/models");
+
 const app = express();
 app.disable("x-powered-by");
 
@@ -68,8 +70,6 @@ const gracefullShutdown = async () => {
 };
 
 app.listen(parseInt(port), host, async () => {
-  console.log(`App listening on port ${port} and host ${host}`);
-
   process.on("unhandledRejection", (reason, promise) => {
     console.log("unhandled rejection event", {
       reason: reason,
@@ -77,9 +77,16 @@ app.listen(parseInt(port), host, async () => {
     });
   });
 
+  models.reddartDb.authenticate().then(() => {
+    console.log('Connection has been established successfully.');
+ }).catch((error: any) => {
+    console.error('Unable to connect to the database: ', error);
+ });
+
   scanSui();
   // await MongoDbConnectionManager.connectNoSqlDB();
 
+  console.log(`App listening on port ${port} and host ${host}`);
   process.on("SIGTERM", gracefullShutdown);
   process.on("SIGINT", gracefullShutdown);
   process.on("SIGHUP", gracefullShutdown);
