@@ -1,6 +1,6 @@
 FROM node:18
 WORKDIR /usr/src/app
-COPY package*.json app.js ./
+COPY . .
 RUN npm ci
 EXPOSE 2002
-CMD ["node", "app.js"]
+CMD ["node", "./build/app.js"]
