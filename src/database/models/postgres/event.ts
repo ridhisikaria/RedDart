@@ -50,6 +50,10 @@ module.exports = (sequelize: SequelizeInstance) => {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            network: {
+                type: DataTypes.STRING,
+                allowNull: false
+            }
         },
         {
             sequelize,

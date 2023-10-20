@@ -29,12 +29,12 @@ export class UserController {
             const query = req.body;
 
             const address = query.address as string;
+            const network = query.network as string;
             if (!address) {
                 return res.status(400).json({ success: false, error: { message: "Validation Failed" } });
             }
 
-
-            await UserRepository.create({ address, network: "SUI" });
+            await UserRepository.create({ address, network });
 
             const events = await EventRepository.get(address)
 
@@ -42,7 +42,7 @@ export class UserController {
 
             events.forEach(event => {
                 data.push({
-                    description: "Reward Deposited for Sui Transaction digest " + event.txDigest,
+                    description: `Reward Dispersed for ${event.network} Transaction ` + event.txDigest,
                     timestamp: event.timestamp
                 })
             });
