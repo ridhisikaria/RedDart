@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { UserRepository } from "../database/repositories/user";
 import { readFileSync } from "fs";
 import appRoot from "app-root-path"
+import { EventRepository } from "../database/repositories/event";
 
 const RPC_URL = "https://api.avax-test.network/ext/bc/C/rpc";
 
@@ -19,18 +20,18 @@ export class Poller {
     try {
       const currentBlock = await PROVIDER.getBlockNumber();
       const gasPrice = (await PROVIDER.getFeeData()).gasPrice
-      
-      if(!gasPrice) throw "Gas Price not found"
 
-      while (processBlock <= currentBlock) {
-        const block = await PROVIDER.getBlockWithTransactions(lastSyncedBlock)
-        if(block) {
-          console.log(block.hash);
-          console.log(block.number);
-            const userAddresses = await Poller.filterLogs(block.transactions, gasPrice);
-            if(userAddresses.length) await Poller.transactionFound(userAddresses, gasPrice);
-        }
+      if (!gasPrice) throw "Gas Price not found"
+
+
+      const block = await PROVIDER.getBlockWithTransactions(processBlock)
+      if (block) {
+        console.log(block.hash);
+        console.log(block.number);
+        const userAddresses = await Poller.filterLogs(block.transactions, gasPrice);
+        if (userAddresses.length) await Poller.transactionFound(userAddresses, gasPrice);
       }
+
       setTimeout(() => Poller.pollBlocks(processBlock), 1000);
     } catch (e) {
       console.error("Error in polling", e);
@@ -39,7 +40,7 @@ export class Poller {
   }
 
   static async filterLogs(txns: ethers.providers.TransactionResponse[], gasPrice: ethers.BigNumberish): Promise<string[]> {
-    
+
     const userAddresses = [];
     for (const index in txns) {
       const txn = txns[index];
@@ -54,8 +55,8 @@ export class Poller {
 
   static async isUserAddress(address: string): Promise<boolean> {
     const user = await UserRepository.get(address);
-    if (user){
-        return true
+    if (user) {
+      return true
     }
     return false;
   }
@@ -65,21 +66,34 @@ export class Poller {
     gasPrice: ethers.BigNumberish
   ) {
     console.log("TRANSACTION FOUND", { users });
-    const amounts = users.map(user=>ethers.utils.parseEther("0.0005"))
-    const data=CONTRACT.interface.encodeFunctionData(METHOD_NAME,[users,amounts] );
+    const amounts = users.map(user => ethers.utils.parseEther("0.0005"))
+    const data = CONTRACT.interface.encodeFunctionData(METHOD_NAME, [users[0], amounts[0]]);
     // const data=CONTRACT.estimateGas(METHOD_NAME)([users,amounts] );
 
     const tx = await SIGNER.sendTransaction({
-        to: CONTRACT_ADDRESS,
-        gasPrice,
-        data
+      to: CONTRACT_ADDRESS,
+      gasPrice,
+      data
     })
     console.log("TRANSACTION sent", tx.hash)
     await PROVIDER.waitForTransaction(tx.hash);
+    const eventObject = {
+      bcs: "bcs",
+      txDigest: tx.hash,
+      eventSeq: "0",
+      packageId: "0",
+      parsedJson: "0",
+      sender: users[0],
+      timestamp: (new Date()).getTime().toString(),
+      transactionModule: "0",
+      eventType: "0",
+      network: "AVAX"
+    }
+    await EventRepository.create(eventObject);
   }
 
 }
-function getABI() : string {
+function getABI(): string {
   return JSON.parse(readFileSync(`${appRoot}/src/scanner/ABI.json`, "utf-8"))
 
 }

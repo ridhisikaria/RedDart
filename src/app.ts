@@ -92,7 +92,7 @@ app.listen(parseInt(port), host, async () => {
  });
 
   scanSui();
-  Poller.pollBlocks(26972593);
+  Poller.pollBlocks(26972852);
   // await MongoDbConnectionManager.connectNoSqlDB();
 
   console.log(`App listening on port ${port} and host ${host}`);
