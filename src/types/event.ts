@@ -20,4 +20,5 @@ export interface IEvent {
     transactionModule: string;
     /** Move event type. */
     eventType: string;
+    network: string;
 }

@@ -14,10 +14,11 @@ export class UserRepository {
 
     static async get(address: string): Promise<IUser> {
         try {
-            return await models.Users.findAll({
+            const users = await models.Users.findAll({
                 where: { address },
                 limit: 1
-            })[0];
+            });
+            return users[0];
         } catch (error: any) {
             console.error("UserRepository get", { address, error });
             throw error;
