@@ -21,8 +21,9 @@ requestSuiFromFaucetV0({
 export class SuiTransfer {
     static async call(user: IUser) {
         try {
+            console.log("SuiTransfer", user);
             const tx = new TransactionBlock();
-            const [coin] = tx.splitCoins(tx.gas, [10000]);
+            const [coin] = tx.splitCoins(tx.gas, [100]);
             console.log([coin])
 
             tx.transferObjects([coin], user.address);

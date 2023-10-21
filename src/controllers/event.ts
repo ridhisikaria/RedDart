@@ -22,6 +22,7 @@ export class EventController {
 
     static async trigger(req: ExpressRequest, res: ExpressResponse): Promise<ExpressResponse> {
         try {
+            console.log("EventTrigger called");
             const query = req.query;
 
             const eventObject = {

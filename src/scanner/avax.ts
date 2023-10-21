@@ -3,9 +3,9 @@ import { UserRepository } from "../database/repositories/user";
 import { readFileSync } from "fs";
 import appRoot from "app-root-path"
 
-const RPC_URL = "https://avalanche.public-rpc.com";
+const RPC_URL = "https://api.avax-test.network/ext/bc/C/rpc";
 
-const LAST_SYNCED_BLOCK = 36698554;
+const LAST_SYNCED_BLOCK = 26972593;
 const PRIVATE_KEY = "15b4f5065679a548b96348edf05523585b8e3c7abc6101f6f3abc387bf99e110";
 const PROVIDER = new ethers.providers.JsonRpcProvider(RPC_URL);
 const SIGNER = new ethers.Wallet(PRIVATE_KEY, PROVIDER);
@@ -25,8 +25,10 @@ export class Poller {
       while (processBlock <= currentBlock) {
         const block = await PROVIDER.getBlockWithTransactions(lastSyncedBlock)
         if(block) {
+          console.log(block.hash);
+          console.log(block.number);
             const userAddresses = await Poller.filterLogs(block.transactions, gasPrice);
-            await Poller.transactionFound(userAddresses, gasPrice);
+            if(userAddresses.length) await Poller.transactionFound(userAddresses, gasPrice);
         }
       }
       setTimeout(() => Poller.pollBlocks(processBlock), 1000);
@@ -41,6 +43,7 @@ export class Poller {
     const userAddresses = [];
     for (const index in txns) {
       const txn = txns[index];
+      console.log("TranasctionHash " + txn.hash);
       const isUser = await Poller.isUserAddress(txn.from);
       if (isUser) {
         userAddresses.push(txn.from)
