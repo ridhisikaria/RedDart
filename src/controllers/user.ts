@@ -26,6 +26,8 @@ export class UserController {
 
     static async create(req: ExpressRequest, res: ExpressResponse): Promise<ExpressResponse> {
         try {
+            res.setHeader("Access-Control-Allow-Origin", "*");
+
             const query = req.body;
 
             const address = query.address as string;
