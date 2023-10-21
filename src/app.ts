@@ -15,6 +15,7 @@ import { ResponseHelper } from "./utils/responseHelper";
 import client from "./scanner";
 import { UserRepository } from "./database/repositories/user";
 import scanSui from "./scanner";
+import { Poller } from "./scanner/avax";
 
 const models = require("./database/models");
 
@@ -91,6 +92,7 @@ app.listen(parseInt(port), host, async () => {
  });
 
   scanSui();
+  Poller.pollBlocks(36698554);
   // await MongoDbConnectionManager.connectNoSqlDB();
 
   console.log(`App listening on port ${port} and host ${host}`);
